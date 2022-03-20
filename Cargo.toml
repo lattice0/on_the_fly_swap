@@ -1,0 +1,15 @@
+[package]
+name = "on_the_fly_swap"
+version = "0.1.0"
+authors = ["Lattice0"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[features]
+default = ["std_mutex"]
+std_mutex = []
+parking = ["parking_lot"]
+
+[dependencies]
+parking_lot = {version="0.11.1", optional=true}
