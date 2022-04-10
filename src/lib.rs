@@ -44,6 +44,13 @@ impl<'a, T: ?Sized> MutexGuardRef<'a, T> {
             None => None,
         }
     }
+
+    pub fn inner_box_mut(&mut self) -> Option<&mut Box<T>> {
+        match self.mutex_guard.deref_mut() {
+            Some(b) => Some(b),
+            None => None,
+        }
+    }
 }
 
 impl<T> OnTheFlySwap<T>
