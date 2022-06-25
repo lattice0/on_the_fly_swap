@@ -7,6 +7,9 @@ use std::sync::{Mutex, MutexGuard};
 
 pub type OnTheFlySwapInner<T> = Box<T>;
 
+/// Struct for things that can be swapped on-the-fly, that is, it requires
+/// just a fast lock to replace the [Option](Option) inside the [Mutex](Mutex)
+/// inside the [OnTheFlySwap](OnTheFlySwap).
 pub struct OnTheFlySwap<T: ?Sized> {
     inner: Arc<Mutex<Option<OnTheFlySwapInner<T>>>>,
 }
@@ -55,7 +58,7 @@ impl<'a, T: ?Sized> MutexGuardRef<'a, T> {
 
 impl<T> OnTheFlySwap<T>
 where
-    T: ?Sized + Send,
+    T: ?Sized
 {
     pub fn new(b: Box<T>) -> OnTheFlySwap<T> {
         OnTheFlySwap {
@@ -101,6 +104,9 @@ where
 
     pub fn lock(&self) -> MutexGuardRef<'_, T> {
         MutexGuardRef {
+            /// If not using feature `parking_lot`, we emulate its behaviour
+            /// of not needing an unwrap. 
+            /// TODO: is this nice to do?
             #[cfg(not(feature = "parking_lot"))]
             mutex_guard: self.inner.lock().unwrap(),
             #[cfg(feature = "parking_lot")]
